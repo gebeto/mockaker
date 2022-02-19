@@ -1,4 +1,5 @@
 import React from 'react';
+import { styled } from 'baseui';
 import { FlexGrid, FlexGridItem } from 'baseui/flex-grid';
 import { Card } from 'baseui/card';
 import { Slider } from 'baseui/slider';
@@ -6,10 +7,13 @@ import { Input } from 'baseui/input';
 import { FormControl } from 'baseui/form-control';
 import { Checkbox, LABEL_PLACEMENT } from 'baseui/checkbox';
 import { FileUploader } from 'baseui/file-uploader';
-
-import './styles.css';
+import { Accordion, Panel } from "baseui/accordion";
 
 import { templates } from './templates';
+
+const Canvas = styled("canvas", {
+  width: '100%'
+});
 
 
 export type ImageCanvasProps = {};
@@ -46,17 +50,21 @@ const withClip = (ctx: CanvasRenderingContext2D, radius: number, x: number, y: n
 
 const SliderInput: React.FC<any> = ({ name, label, values, setValue, min, max }) => (
   <FormControl label={label}>
-    <>
-      <Input size="compact" value={values[name]} type="number" min={min} max={max} onChange={(e: any) => setValue(name, parseInt(e.target.value))} />
-      <Slider min={min} max={max} value={[values[name]]} onChange={e => setValue(name, e.value[0])} />
-    </>
+    <Input
+      size="compact"
+      value={values[name]}
+      type="number"
+      min={min}
+      max={max}
+      onChange={(e: any) => setValue(name, parseInt(e.target.value))}
+    />
   </FormControl>
 );
 
 const ImageDebugControls: React.FC<any> = ({ values, setValue, setFile }) => {
   return (
     <>
-      <FlexGridItem width="100%">
+      <FlexGridItem width="100%" paddingBottom="16px">
         <Checkbox
           checked={values.debug}
           labelPlacement={LABEL_PLACEMENT.right}
@@ -65,25 +73,40 @@ const ImageDebugControls: React.FC<any> = ({ values, setValue, setFile }) => {
           Debug
         </Checkbox>
       </FlexGridItem>
-      <FlexGrid flexGridColumnCount={5} flexGridColumnGap="scale800">
+      {values.debug && <>
+        <FlexGrid flexGridColumnCount={5} flexGridColumnGap="scale800">
+          <FlexGridItem>
+            <SliderInput min={0} max={2048} label="X" name="x" values={values} setValue={setValue} />
+          </FlexGridItem>
+          <FlexGridItem>
+            <SliderInput min={0} max={2048} label="Y" name="y" values={values} setValue={setValue} />
+          </FlexGridItem>
+          <FlexGridItem>
+            <SliderInput min={0} max={2048} label="Width" name="width" values={values} setValue={setValue} />
+          </FlexGridItem>
+          <FlexGridItem>
+            <SliderInput min={0} max={2048} label="Height" name="height" values={values} setValue={setValue} />
+          </FlexGridItem>
+          <FlexGridItem>
+            <SliderInput min={0} max={300} label="Corner" name="cornerRadius" values={values} setValue={setValue} />
+          </FlexGridItem>
+        </FlexGrid>
         <FlexGridItem>
-          <SliderInput min={0} max={2048} label="X" name="x" values={values} setValue={setValue} />
+          <Accordion>
+            <Panel title="Config" overrides={{ PanelContainer: { style: { borderBottom: 'none' } } }}>
+              <pre style={{width: '100%'}}>
+                {JSON.stringify({
+                  position: [values.x, values.y],
+                  size: [values.width, values.height],
+                  cornerRadius: values.cornerRadius,
+                }, undefined, 4)}
+              </pre>
+            </Panel>
+          </Accordion>
         </FlexGridItem>
-        <FlexGridItem>
-          <SliderInput min={0} max={2048} label="Y" name="y" values={values} setValue={setValue} />
-        </FlexGridItem>
-        <FlexGridItem>
-          <SliderInput min={0} max={2048} label="Width" name="width" values={values} setValue={setValue} />
-        </FlexGridItem>
-        <FlexGridItem>
-          <SliderInput min={0} max={2048} label="Height" name="height" values={values} setValue={setValue} />
-        </FlexGridItem>
-        <FlexGridItem>
-          <SliderInput min={0} max={300} label="Corner" name="cornerRadius" values={values} setValue={setValue} />
-        </FlexGridItem>
-      </FlexGrid>
+      </>}
       <FlexGridItem>
-        <FileUploader onDropAccepted={files => setFile(files?.[0])} />
+        <FileUploader accept="image/*" onDropAccepted={files => setFile(files?.[0])} />
       </FlexGridItem>
     </>
   );
@@ -140,7 +163,7 @@ export const ImageCanvas: React.FC<ImageCanvasProps> = (props) => {
       const templateImage = await loadImage(template.link);
       const image = file ? await loadImage(URL.createObjectURL(file)) : undefined;
       ctx.clearRect(0, 0, 2048, 2048);
-      ctx.fillStyle = 'black';
+      ctx.fillStyle = 'lightblue';
 
       const posX = debug ? debugValues.x : template.position[0];
       const posY = debug ? debugValues.y : template.position[1];
@@ -162,12 +185,7 @@ export const ImageCanvas: React.FC<ImageCanvasProps> = (props) => {
     <FlexGrid overflow="visible" flexGridColumnCount={2} flexGridColumnGap="scale800">
       <FlexGridItem>
         <Card>
-          <canvas
-            className="image-canvas"
-            width="2048"
-            height="2048"
-            ref={setCanvas}
-          />
+          <Canvas width="2048" height="2048" ref={setCanvas} />
         </Card>
       </FlexGridItem>
       <FlexGridItem>
@@ -176,16 +194,6 @@ export const ImageCanvas: React.FC<ImageCanvasProps> = (props) => {
           setValue={setDebugValue}
           setFile={setFile}
         />
-
-        <FlexGridItem>
-          <pre style={{width: '100%'}}>
-            {JSON.stringify({
-              position: [debugValues.x, debugValues.y],
-              size: [debugValues.width, debugValues.height],
-              cornerRadius: debugValues.cornerRadius,
-            }, undefined, 4)}
-          </pre>
-        </FlexGridItem>
       </FlexGridItem>
     </FlexGrid>
   );
