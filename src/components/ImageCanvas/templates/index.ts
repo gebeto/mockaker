@@ -1,7 +1,10 @@
+import React from 'react';
+
+
 const _templates = import.meta.glob('./*/index.ts');
 
 
-const loadTemplates = async () => {
+export const loadTemplates = async () => {
   const result = [];
 
   for (const key in _templates) {
@@ -16,5 +19,12 @@ const loadTemplates = async () => {
   return result;
 };
 
+export const useTemplates = () => {
+  const [templates, setTemplates] = React.useState<any[]>([]);
 
-export const templates = await loadTemplates();
+  React.useEffect(() => {
+    loadTemplates().then(setTemplates);
+  }, []);
+
+  return templates;
+}

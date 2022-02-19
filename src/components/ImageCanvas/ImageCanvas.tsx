@@ -2,13 +2,14 @@ import React from 'react';
 import { styled } from 'baseui';
 import { FlexGrid, FlexGridItem } from 'baseui/flex-grid';
 import { Card } from 'baseui/card';
+import { FileUploader } from 'baseui/file-uploader';
+import { Select } from 'baseui/select';
+import { Spinner } from 'baseui/spinner';
 
-import { templates } from './templates';
+import { useTemplates } from './templates';
 import { DebugValues } from './debugValues';
 import { ImageDebugControls } from './ImageDebugControls';
 import { loadImage, withCanvasClip } from './tools';
-import { FileUploader } from 'baseui/file-uploader';
-import { Select } from 'baseui/select';
 
 
 const Canvas = styled("canvas", {
@@ -19,8 +20,11 @@ const Canvas = styled("canvas", {
 export const ImageCanvas: React.VFC = (props) => {
   const [canvas, setCanvas] = React.useState<HTMLCanvasElement | null>();
   const [file, setFile] = React.useState<File>();
+  const templates = useTemplates();
   const [template, setTemplate] = React.useState(templates[0]);
   const [debugValues, setDebugValues] = React.useState<DebugValues>();
+
+  React.useEffect(() => setTemplate(templates?.[0]), [templates]);
 
   React.useEffect(() => {
     const ctx = canvas?.getContext('2d');
@@ -68,7 +72,7 @@ export const ImageCanvas: React.VFC = (props) => {
           <FlexGridItem>
             <FileUploader accept="image/*" onDropAccepted={files => setFile(files?.[0])} />
           </FlexGridItem>
-          <ImageDebugControls key={template.id} setDebugValues={setDebugValues} template={template} />
+          {template?.id && <ImageDebugControls key={template?.id} setDebugValues={setDebugValues} template={template} />}
         </FlexGrid>
       </FlexGridItem>
     </FlexGrid>
