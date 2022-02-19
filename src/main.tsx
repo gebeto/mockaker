@@ -1,11 +1,16 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import './index.css'
-import App from './App'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { GeistProvider, CssBaseline } from '@geist-ui/core'
+
+import { App } from './components';
+
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <GeistProvider>
+      <CssBaseline />
+      <App />
+    </GeistProvider>
   </React.StrictMode>,
   document.getElementById('root')
 )
