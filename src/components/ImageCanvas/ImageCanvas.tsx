@@ -28,7 +28,7 @@ export const ImageCanvas: React.VFC = (props) => {
 
   React.useEffect(() => {
     const ctx = canvas?.getContext('2d');
-    if (!ctx) return;
+    if (!ctx || !template) return;
     (async () => {
       const templateImage = await loadImage(template.link);
       const image = file ? await loadImage(URL.createObjectURL(file)) : undefined;
@@ -70,7 +70,11 @@ export const ImageCanvas: React.VFC = (props) => {
             />
           </FlexGridItem>
           <FlexGridItem>
-            <FileUploader accept="image/*" onDropAccepted={files => setFile(files?.[0])} />
+            <input type="file" onChange={e => {
+              setFile(e.target.files?.[0]);
+              e.target.value = '';
+            }} />
+            {/* <FileUploader accept="image/*" onDropAccepted={files => setFile(files?.[0])} /> */}
           </FlexGridItem>
           {template?.id && <ImageDebugControls key={template?.id} setDebugValues={setDebugValues} template={template} />}
         </FlexGrid>
