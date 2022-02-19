@@ -43,6 +43,7 @@ export const ImageCanvas: React.VFC = (props) => {
           ctx.drawImage(image, 0, 0, image.width, image.height, template.position[0], template.position[1], sizeWidth, template.size[1]);
         }
       });
+
       ctx.drawImage(templateImage, 0, 0, templateImage.width, templateImage.height, 0, 0, 2048, 2048);
     })();
   }, [canvas, file, debugValues, template]);

@@ -4,7 +4,6 @@ import { Checkbox, LABEL_PLACEMENT } from 'baseui/checkbox';
 import { FormControl } from 'baseui/form-control';
 import { Input } from 'baseui/input';
 import { Accordion, Panel } from 'baseui/accordion';
-import { FileUploader } from 'baseui/file-uploader';
 import { useDebugValues } from './debugValues';
 
 
