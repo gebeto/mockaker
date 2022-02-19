@@ -20,7 +20,7 @@ const SliderInput: React.FC<any> = ({ name, label, values, setValue, min, max })
 );
 
 
-export const ImageDebugControls: React.FC<any> = ({ values, setValue, setFile }) => {
+export const ImageDebugControls: React.FC<any> = ({ values, setValue }) => {
   return (
     <>
       <FlexGridItem width="100%">
