@@ -40,7 +40,7 @@ export const ImageCanvas: React.VFC = (props) => {
       withCanvasClip(ctx, cornerRadius, posX, posY, sizeWidth, sizeHeight, () => {
         ctx.fillRect(posX, posY, sizeWidth, sizeHeight);
         if (image) {
-          ctx.drawImage(image, 0, 0, image.width, image.height, template.position[0], template.position[1], sizeWidth, template.size[1]);
+          ctx.drawImage(image, 0, 0, image.width, image.height, posX, posY, sizeWidth, sizeHeight);
         }
       });
 
