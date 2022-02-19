@@ -37,7 +37,7 @@ export const ImageCanvas: React.FC<ImageCanvasProps> = (props) => {
       const templateImage = await loadImage(template.link);
       const image = file ? await loadImage(URL.createObjectURL(file)) : undefined;
       ctx.clearRect(0, 0, 2048, 2048);
-      ctx.fillStyle = 'lightblue';
+      ctx.fillStyle = debugValues.debug ? 'red' : 'lightblue';
 
       const posX = debug ? debugValues.x : template.position[0];
       const posY = debug ? debugValues.y : template.position[1];
