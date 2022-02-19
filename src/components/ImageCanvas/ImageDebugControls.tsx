@@ -1,9 +1,11 @@
+import React from 'react';
 import { FlexGrid, FlexGridItem } from 'baseui/flex-grid';
 import { Checkbox, LABEL_PLACEMENT } from 'baseui/checkbox';
 import { FormControl } from 'baseui/form-control';
 import { Input } from 'baseui/input';
 import { Accordion, Panel } from 'baseui/accordion';
 import { FileUploader } from 'baseui/file-uploader';
+import { useDebugValues } from './debugValues';
 
 
 const SliderInput: React.FC<any> = ({ name, label, values, setValue, min, max }) => (
@@ -20,7 +22,18 @@ const SliderInput: React.FC<any> = ({ name, label, values, setValue, min, max })
 );
 
 
-export const ImageDebugControls: React.FC<any> = ({ values, setValue }) => {
+export const ImageDebugControls: React.FC<any> = ({ setDebugValues, template }) => {
+  const [values, setValue] = useDebugValues({
+    x: template.position[0],
+    y: template.position[1],
+    width: template.size[0],
+    height: template.size[1],
+    cornerRadius: template.cornerRadius,
+    debug: false,
+  });
+
+  React.useEffect(() => setDebugValues(values), [values]);
+
   return (
     <>
       <FlexGridItem width="100%">
