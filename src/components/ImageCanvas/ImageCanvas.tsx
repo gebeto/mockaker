@@ -7,6 +7,7 @@ import { templates } from './templates';
 import { useDebugValues } from './debugValues';
 import { ImageDebugControls } from './ImageDebugControls';
 import { loadImage, withCanvasClip } from './tools';
+import { FileUploader } from 'baseui/file-uploader';
 
 const Canvas = styled("canvas", {
   width: '100%'
@@ -55,13 +56,16 @@ export const ImageCanvas: React.FC<ImageCanvasProps> = (props) => {
   }, [canvas, file, debug, debugValues]);
 
   return (
-    <FlexGrid overflow="visible" flexGridColumnCount={2} flexGridColumnGap="scale800">
+    <FlexGrid overflow="visible" flexGridColumnCount={[1, 1, 1, 2, 2]} flexGridColumnGap="scale800" flexGridRowGap="scale800">
       <FlexGridItem>
         <Card>
           <Canvas width="2048" height="2048" ref={setCanvas} />
         </Card>
       </FlexGridItem>
       <FlexGridItem>
+        <FlexGridItem>
+          <FileUploader accept="image/*" onDropAccepted={files => setFile(files?.[0])} />
+        </FlexGridItem>
         <ImageDebugControls
           values={debugValues}
           setValue={setDebugValue}

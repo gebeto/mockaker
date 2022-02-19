@@ -23,7 +23,7 @@ const SliderInput: React.FC<any> = ({ name, label, values, setValue, min, max })
 export const ImageDebugControls: React.FC<any> = ({ values, setValue, setFile }) => {
   return (
     <>
-      <FlexGridItem width="100%" paddingBottom="16px">
+      <FlexGridItem width="100%" paddingTop="16px">
         <Checkbox
           checked={values.debug}
           labelPlacement={LABEL_PLACEMENT.right}
@@ -64,9 +64,6 @@ export const ImageDebugControls: React.FC<any> = ({ values, setValue, setFile })
           </Accordion>
         </FlexGridItem>
       </>}
-      <FlexGridItem>
-        <FileUploader accept="image/*" onDropAccepted={files => setFile(files?.[0])} />
-      </FlexGridItem>
     </>
   );
 }
