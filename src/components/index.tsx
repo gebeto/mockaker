@@ -1,17 +1,19 @@
-import { Button, Page, Text, Card, Grid } from '@geist-ui/core';
+import { HeadingMedium } from 'baseui/typography';
+import { Grid, Cell } from 'baseui/layout-grid';
+import { Card } from 'baseui/card';
+
 import { ImageCanvas } from './ImageCanvas/ImageCanvas'
 
+
 export const App = () => (
-  <Page>
-    <Grid.Container gap={2}>
-      <Grid xs={24}>
-        <Text h1>Mockaker</Text>
-      </Grid>
-      <Grid xs={24}>
-        <Card shadow width="100%">
-          <ImageCanvas />
-        </Card>
-      </Grid>
-    </Grid.Container>
-  </Page>
+  <Grid>
+    <Cell span={12}>
+      <HeadingMedium>Mockaker</HeadingMedium>
+    </Cell>
+    <Cell span={12}>
+      <Card>
+        <ImageCanvas />
+      </Card>
+    </Cell>
+  </Grid>
 )
