@@ -2,14 +2,11 @@ import React from 'react';
 import { styled } from 'baseui';
 import { FlexGrid, FlexGridItem } from 'baseui/flex-grid';
 import { Card } from 'baseui/card';
-import { Slider } from 'baseui/slider';
-import { Input } from 'baseui/input';
-import { FormControl } from 'baseui/form-control';
-import { Checkbox, LABEL_PLACEMENT } from 'baseui/checkbox';
-import { FileUploader } from 'baseui/file-uploader';
-import { Accordion, Panel } from "baseui/accordion";
 
 import { templates } from './templates';
+import { useDebugValues } from './debugValues';
+import { ImageDebugControls } from './ImageDebugControls';
+import { loadImage, withCanvasClip } from './tools';
 
 const Canvas = styled("canvas", {
   width: '100%'
@@ -17,130 +14,6 @@ const Canvas = styled("canvas", {
 
 
 export type ImageCanvasProps = {};
-
-
-const loadImage = (src: string): Promise<HTMLImageElement> => new Promise((resolve, reject) => {
-  const image = new Image();
-  image.addEventListener('load', () => resolve(image));
-  image.addEventListener('error', reject);
-  image.src = src;
-});
-
-
-const withClip = (ctx: CanvasRenderingContext2D, radius: number, x: number, y: number, width: number, height: number, callback: () => any) => {
-  ctx.beginPath();
-  ctx.moveTo(x + radius, y);
-  ctx.lineTo(x + width - radius, y);
-  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-  ctx.lineTo(x + width, y + height - radius);
-  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-  ctx.lineTo(x + radius, y + height);
-  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-  ctx.lineTo(x, y + radius);
-  ctx.quadraticCurveTo(x, y, x + radius, y);
-  ctx.closePath();
-
-  ctx.save();
-  ctx.clip();
-
-  callback();
-
-  ctx.restore();
-}
-
-const SliderInput: React.FC<any> = ({ name, label, values, setValue, min, max }) => (
-  <FormControl label={label}>
-    <Input
-      size="compact"
-      value={values[name]}
-      type="number"
-      min={min}
-      max={max}
-      onChange={(e: any) => setValue(name, parseInt(e.target.value))}
-    />
-  </FormControl>
-);
-
-const ImageDebugControls: React.FC<any> = ({ values, setValue, setFile }) => {
-  return (
-    <>
-      <FlexGridItem width="100%" paddingBottom="16px">
-        <Checkbox
-          checked={values.debug}
-          labelPlacement={LABEL_PLACEMENT.right}
-          onChange={(e: any) => setValue('debug', e.target.checked)}
-        >
-          Debug
-        </Checkbox>
-      </FlexGridItem>
-      {values.debug && <>
-        <FlexGrid flexGridColumnCount={5} flexGridColumnGap="scale800">
-          <FlexGridItem>
-            <SliderInput min={0} max={2048} label="X" name="x" values={values} setValue={setValue} />
-          </FlexGridItem>
-          <FlexGridItem>
-            <SliderInput min={0} max={2048} label="Y" name="y" values={values} setValue={setValue} />
-          </FlexGridItem>
-          <FlexGridItem>
-            <SliderInput min={0} max={2048} label="Width" name="width" values={values} setValue={setValue} />
-          </FlexGridItem>
-          <FlexGridItem>
-            <SliderInput min={0} max={2048} label="Height" name="height" values={values} setValue={setValue} />
-          </FlexGridItem>
-          <FlexGridItem>
-            <SliderInput min={0} max={300} label="Corner" name="cornerRadius" values={values} setValue={setValue} />
-          </FlexGridItem>
-        </FlexGrid>
-        <FlexGridItem>
-          <Accordion>
-            <Panel title="Config" overrides={{ PanelContainer: { style: { borderBottom: 'none' } } }}>
-              <pre style={{width: '100%'}}>
-                {JSON.stringify({
-                  position: [values.x, values.y],
-                  size: [values.width, values.height],
-                  cornerRadius: values.cornerRadius,
-                }, undefined, 4)}
-              </pre>
-            </Panel>
-          </Accordion>
-        </FlexGridItem>
-      </>}
-      <FlexGridItem>
-        <FileUploader accept="image/*" onDropAccepted={files => setFile(files?.[0])} />
-      </FlexGridItem>
-    </>
-  );
-}
-
-type DebugValues = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  cornerRadius: number;
-  debug: boolean;
-}
-
-const initial: DebugValues = {
-  x: 0,
-  y: 0,
-  width: 0,
-  height: 0,
-  cornerRadius: 0,
-  debug: false,
-}
-
-const useDebugValues = (defaults?: Partial<DebugValues>) => {
-  const [debugValues, setDebugValues] = React.useState<DebugValues>({
-    ...initial,
-    ...defaults
-  });
-  const setValue = (name: string, value: number) => {
-    setDebugValues({ ...debugValues, [name]: value })
-  };
-
-  return [debugValues, setValue] as [typeof debugValues, typeof setValue];
-}
 
 
 export const ImageCanvas: React.FC<ImageCanvasProps> = (props) => {
@@ -171,7 +44,7 @@ export const ImageCanvas: React.FC<ImageCanvasProps> = (props) => {
       const sizeHeight = debug ? debugValues.height : template.size[1];
       const cornerRadius = debug ? debugValues.cornerRadius : template.cornerRadius;
 
-      withClip(ctx, cornerRadius, posX, posY, sizeWidth, sizeHeight, () => {
+      withCanvasClip(ctx, cornerRadius, posX, posY, sizeWidth, sizeHeight, () => {
         ctx.fillRect(posX, posY, sizeWidth, sizeHeight);
         if (image) {
           ctx.drawImage(image, 0, 0, image.width, image.height, template.position[0], template.position[1], sizeWidth, template.size[1]);
