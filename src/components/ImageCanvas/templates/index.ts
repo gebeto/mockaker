@@ -1,8 +1,20 @@
-import Hand1 from './iphone_13_pro_hand_1';
-import Hand2 from './iphone_13_mini_hand_1';
+const _templates = import.meta.glob('./*/index.ts');
 
 
-export const templates = [
-  Hand1,
-  Hand2,
-];
+const loadTemplates = async () => {
+  const result = [];
+
+  for (const key in _templates) {
+    const template = await _templates[key]();
+    result.push({
+      id: key,
+      label: template.default.title,
+      ...template.default
+    });
+  }
+
+  return result;
+};
+
+
+export const templates = await loadTemplates();
